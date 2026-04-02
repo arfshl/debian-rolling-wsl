@@ -30,9 +30,9 @@ jobs:
         run: |
           sudo apt update && sudo apt install -yq curl libarchive-tools
           curl -L -o /tmp/mmdebstrap.deb http://ftp.us.debian.org/debian/pool/main/m/mmdebstrap/mmdebstrap_1.5.7-3_all.deb
-          sudo apt install -yq /tmp/mmdebstrap.deb
+          sudo apt install -q /tmp/mmdebstrap.deb
           curl -L -o /tmp/keyring.deb http://ftp.us.debian.org/debian/pool/main/d/debian-archive-keyring/debian-archive-keyring_2025.1_all.deb
-          sudo apt install -yq /tmp/keyring.deb
+          sudo apt install -q /tmp/keyring.deb
       - name: Build stock rootfs
         run: |
           dist_version="$RELEASE"
@@ -42,9 +42,10 @@ jobs:
           --components="main,contrib,non-free" \
           --include=ca-certificates,locales \
           --format=tar \
-          --customize-hook='chroot "$1" sed -i -E 's/#[[:space:]]?(en_US.UTF-8[[:space:]]+UTF-8)/\1/g' /etc/locale.gen && /bin/bash -c "DEBIAN_FRONTEND=noninteractive dpkg-reconfigure locales"'
+          --customize-hook="chroot \$1 sed -i 's/^# \(en_US.UTF-8\)/\1/' /etc/locale.gen" \
+          --customize-hook="chroot \$1 /bin/bash -c 'DEBIAN_FRONTEND=noninteractive dpkg-reconfigure locales'" \
           ${dist_version} \
-          rootfs.tar.gz \
+          rootfs.tar.gz
 
       - name: Build  rootfs with my own customization
         run: |
