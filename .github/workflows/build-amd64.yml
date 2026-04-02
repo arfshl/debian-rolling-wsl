@@ -64,9 +64,6 @@ jobs:
           sudo rm -rf $GITHUB_WORKSPACE/dump/var/tmp*
           sudo rm -rf $GITHUB_WORKSPACE/dump/tmp*
           EOF
-          cd $GITHUB_WORKSPACE/dump
-          sudo rm $GITHUB_WORKSPACE/rootfs.tar.gz
-          sudo tar --exclude=dev/* --warning=no-file-changed -czpvf $GITHUB_WORKSPACE/rootfs.tar.gz .
 
       - name: Combine wsldl and rootfs
         run: |
@@ -74,8 +71,12 @@ jobs:
           bsdtar -xf icons.zip
           mv Debian.exe debian.exe
           bsdtar -a -cf debian.zip rootfs.tar.gz debian.exe
+          cd $GITHUB_WORKSPACE/dump
+          sudo rm $GITHUB_WORKSPACE/rootfs.tar.gz
+          sudo tar --exclude=dev/* --warning=no-file-changed -czpvf $GITHUB_WORKSPACE/rootfs.tar.gz .
+          cd $GITHUB_WORKSPACE/
           cp debian.exe debian-custom.exe
-          bsdtar -a -cf debian-custom.zip rootfs-custom.tar.gz debian-custom.exe 
+          bsdtar -a -cf debian-custom.zip rootfs.tar.gz debian-custom.exe 
 
       - name: Push to release
         uses: softprops/action-gh-release@v2
