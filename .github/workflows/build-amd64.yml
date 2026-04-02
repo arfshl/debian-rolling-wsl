@@ -48,7 +48,7 @@ jobs:
       - name: Build  rootfs with my own customization
         run: |
           mkdir -p $GITHUB_WORKSPACE/dump
-          sudo tar -xjpvf $GITHUB_WORKSPACE/rootfs.tar.gz -C $GITHUB_WORKSPACE/dump
+          sudo tar -xzpvf $GITHUB_WORKSPACE/rootfs.tar.gz -C $GITHUB_WORKSPACE/dump
           cat <<- EOF | sudo unshare -mpf bash -e -
           sudo mount --bind /dev $GITHUB_WORKSPACE/dump/dev
           sudo mount --bind /proc $GITHUB_WORKSPACE/dump/proc
