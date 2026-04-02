@@ -1,0 +1,86 @@
+name: "Build arm64"
+
+env:
+      RELEASE: trixie
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+on:
+  workflow_dispatch:
+  schedule:
+# Build Every Week
+    - cron: "0 0 * * 0"
+  push:
+    branches: [ 'main' ]
+    paths:
+      - ".github/workflows/build-arm64.yml"
+
+
+permissions:
+  contents: write  
+
+jobs:
+  build:
+    runs-on: ubuntu-arm64
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - name: Install Needed Dependencies
+        run: |
+          sudo apt update && sudo apt install -yq curl libarchive-tools
+          curl -L -o /tmp/mmdebstrap.deb http://ftp.us.debian.org/debian/pool/main/m/mmdebstrap/mmdebstrap_1.5.7-3_all.deb
+          sudo apt install -yq /tmp/mmdebstrap.deb
+          curl -L -o /tmp/keyring.deb http://ftp.us.debian.org/debian/pool/main/d/debian-archive-keyring/debian-archive-keyring_2025.1_all.deb
+          sudo apt install -yq /tmp/keyring.deb
+      - name: Build stock rootfs
+        run: |
+          dist_version="$RELEASE"
+          sudo mmdebstrap \
+          --arch=arm64 \
+          --variant=minbase \
+          --components="main,contrib,non-free" \
+          --include=ca-certificates,locales \
+          --format=tar \
+          ${dist_version} \
+          rootfs.tar.gz \
+
+      - name: Build  rootfs with my own customization
+        run: |
+          mkdir -p $GITHUB_WORKSPACE/dump
+          sudo tar -xjpvf $GITHUB_WORKSPACE/rootfs.tar.gz -C $GITHUB_WORKSPACE/dump
+          cat <<- EOF | sudo unshare -mpf bash -e -
+          sudo mount --bind /dev $GITHUB_WORKSPACE/dump/dev
+          sudo mount --bind /proc $GITHUB_WORKSPACE/dump/proc
+          sudo mount --bind /sys $GITHUB_WORKSPACE/dump/sys
+          sudo chroot $GITHUB_WORKSPACE/dump apt update
+          sudo chroot $GITHUB_WORKSPACE/dump apt install wget -y
+          sudo chroot $GITHUB_WORKSPACE/dump wget https://raw.githubusercontent.com/arfshl/linuxmint-postinstall/refs/heads/main/personal-use/debian-wsl.sh
+          sudo chroot $GITHUB_WORKSPACE/dump bash debian-wsl.sh
+          sudo chroot $GITHUB_WORKSPACE/dump apt clean
+          sudo rm -rf $GITHUB_WORKSPACE/dump/var/lib/apt/lists/*
+          sudo rm -rf $GITHUB_WORKSPACE/dump/var/tmp*
+          sudo rm -rf $GITHUB_WORKSPACE/dump/tmp*
+          EOF
+          cd $GITHUB_WORKSPACE/dump
+          sudo tar --exclude=dev/* --warning=no-file-changed -czpvf $GITHUB_WORKSPACE/rootfs-custom.tar.gz .
+
+      - name: Combine wsldl and rootfs
+        run: |
+          curl -L https://github.com/yuk7/wsldl/releases/download/26032000/icons.zip -o icons.zip
+          bsdtar -xf icons.zip
+          mv Debian.exe debian.exe
+          bsdtar -a -cf debian.zip rootfs.tar.gz debian.exe
+          cp debian.exe debian-custom.exe
+          bsdtar -a -cf debian-custom.zip rootfs-custom.tar.gz debian-custom.exe 
+
+      - name: Push to release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: release-arm64-${{ env.RELEASE }}
+          name: Release arm64 ${{ env.RELEASE }}
+          files: |
+            debian*.zip
+            rootfs*.tar.gz
+          preserve_order: true
+          make_latest: false
