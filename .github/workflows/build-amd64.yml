@@ -58,12 +58,15 @@ jobs:
           sudo chroot $GITHUB_WORKSPACE/dump wget https://raw.githubusercontent.com/arfshl/linuxmint-postinstall/refs/heads/main/personal-use/debian-wsl.sh
           sudo chroot $GITHUB_WORKSPACE/dump bash debian-wsl.sh
           sudo chroot $GITHUB_WORKSPACE/dump apt clean
+          sudo chroot $GITHUB_WORKSPACE/dump sed -i -E 's/#[[:space:]]?(en_US.UTF-8[[:space:]]+UTF-8)/\1/g' ./etc/locale.gen
+          sudo chroot $GITHUB_WORKSPACE/dump DEBIAN_FRONTEND=noninteractive dpkg-reconfigure locales
           sudo rm -rf $GITHUB_WORKSPACE/dump/var/lib/apt/lists/*
           sudo rm -rf $GITHUB_WORKSPACE/dump/var/tmp*
           sudo rm -rf $GITHUB_WORKSPACE/dump/tmp*
           EOF
           cd $GITHUB_WORKSPACE/dump
-          sudo tar --exclude=dev/* --warning=no-file-changed -czpvf $GITHUB_WORKSPACE/rootfs-custom.tar.gz .
+          sudo rm $GITHUB_WORKSPACE/rootfs.tar.gz
+          sudo tar --exclude=dev/* --warning=no-file-changed -czpvf $GITHUB_WORKSPACE/rootfs.tar.gz .
 
       - name: Combine wsldl and rootfs
         run: |
@@ -81,6 +84,5 @@ jobs:
           name: Release amd64 ${{ env.RELEASE }}
           files: |
             debian*.zip
-            rootfs*.tar.gz
           preserve_order: true
           make_latest: false
