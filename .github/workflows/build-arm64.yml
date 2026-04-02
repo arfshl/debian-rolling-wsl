@@ -54,7 +54,7 @@ jobs:
           sudo mount --bind /proc $GITHUB_WORKSPACE/dump/proc
           sudo mount --bind /sys $GITHUB_WORKSPACE/dump/sys
           sudo chroot $GITHUB_WORKSPACE/dump apt update
-          sudo chroot $GITHUB_WORKSPACE/dump apt install wget -y
+          sudo chroot $GITHUB_WORKSPACE/dump apt install wget sudo curl -y
           sudo chroot $GITHUB_WORKSPACE/dump wget https://raw.githubusercontent.com/arfshl/linuxmint-postinstall/refs/heads/main/personal-use/debian-wsl.sh
           sudo chroot $GITHUB_WORKSPACE/dump bash debian-wsl.sh
           sudo chroot $GITHUB_WORKSPACE/dump apt clean
