@@ -1,7 +1,7 @@
-name: "Build amd64"
+name: "Build sid amd64"
 
 env:
-      RELEASE: trixie
+      RELEASE: sid
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 on:
@@ -63,4 +63,4 @@ jobs:
             debian.zip
             rootfs.tar.gz
           preserve_order: true
-          make_latest: latest
+          make_latest: false

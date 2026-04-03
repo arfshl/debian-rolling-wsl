@@ -1,7 +1,7 @@
-name: "Build amd64"
+name: "Build testing arm64"
 
 env:
-      RELEASE: trixie
+      RELEASE: testing
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 on:
@@ -12,7 +12,7 @@ on:
   push:
     branches: [ 'main' ]
     paths:
-      - ".github/workflows/build-amd64.yml"
+      - ".github/workflows/build-arm64.yml"
 
 
 permissions:
@@ -20,7 +20,7 @@ permissions:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04-arm
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v5
@@ -37,7 +37,7 @@ jobs:
         run: |
           dist_version="$RELEASE"
           sudo mmdebstrap \
-          --arch=amd64 \
+          --arch=arm64 \
           --variant=minbase \
           --components="main,contrib,non-free" \
           --include=ca-certificates,locales \
@@ -57,10 +57,10 @@ jobs:
       - name: Push to release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: release-amd64-${{ env.RELEASE }}
-          name: Release amd64 ${{ env.RELEASE }}
+          tag_name: release-arm64-${{ env.RELEASE }}
+          name: Release arm64 ${{ env.RELEASE }}
           files: |
             debian.zip
             rootfs.tar.gz
           preserve_order: true
-          make_latest: latest
+          make_latest: false

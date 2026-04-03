@@ -47,38 +47,12 @@ jobs:
           ${dist_version} \
           rootfs.tar.gz
 
-      - name: Build  rootfs with my own customization
-        run: |
-          mkdir -p $GITHUB_WORKSPACE/dump
-          sudo tar -xzpvf $GITHUB_WORKSPACE/rootfs.tar.gz -C $GITHUB_WORKSPACE/dump
-          cat <<- EOF | sudo unshare -mpf bash -e -
-          sudo mount --bind /dev $GITHUB_WORKSPACE/dump/dev
-          sudo mount --bind /proc $GITHUB_WORKSPACE/dump/proc
-          sudo mount --bind /sys $GITHUB_WORKSPACE/dump/sys
-          sudo chroot $GITHUB_WORKSPACE/dump apt update
-          sudo chroot $GITHUB_WORKSPACE/dump apt install wget sudo curl -y
-          sudo chroot $GITHUB_WORKSPACE/dump wget https://raw.githubusercontent.com/arfshl/linuxmint-postinstall/refs/heads/main/personal-use/debian-wsl.sh
-          sudo chroot $GITHUB_WORKSPACE/dump bash debian-wsl.sh
-          sudo chroot $GITHUB_WORKSPACE/dump apt clean
-          #sudo chroot $GITHUB_WORKSPACE/dump sed -i -E 's/#[[:space:]]?(en_US.UTF-8[[:space:]]+UTF-8)/\1/g' /etc/locale.gen
-          #sudo chroot $GITHUB_WORKSPACE/dump /bin/bash -c 'DEBIAN_FRONTEND=noninteractive dpkg-reconfigure locales'
-          sudo rm -rf $GITHUB_WORKSPACE/dump/var/lib/apt/lists/*
-          sudo rm -rf $GITHUB_WORKSPACE/dump/var/tmp*
-          sudo rm -rf $GITHUB_WORKSPACE/dump/tmp*
-          EOF
-
       - name: Combine wsldl and rootfs
         run: |
           curl -L https://github.com/yuk7/wsldl/releases/download/26032000/icons.zip -o icons.zip
           bsdtar -xf icons.zip
           mv Debian.exe debian.exe
           bsdtar -a -cf debian.zip rootfs.tar.gz debian.exe
-          cd $GITHUB_WORKSPACE/dump
-          sudo rm $GITHUB_WORKSPACE/rootfs.tar.gz
-          sudo tar --exclude=dev/* --warning=no-file-changed -czpvf $GITHUB_WORKSPACE/rootfs.tar.gz .
-          cd $GITHUB_WORKSPACE/
-          cp debian.exe debian-custom.exe
-          bsdtar -a -cf debian-custom.zip rootfs.tar.gz debian-custom.exe 
 
       - name: Push to release
         uses: softprops/action-gh-release@v2
@@ -86,6 +60,7 @@ jobs:
           tag_name: release-arm64-${{ env.RELEASE }}
           name: Release arm64 ${{ env.RELEASE }}
           files: |
-            debian*.zip
+            debian.zip
+            rootfs.tar.gz
           preserve_order: true
-          make_latest: false
+          make_latest: latest
