@@ -79,7 +79,7 @@ Usage :
 
 ```
 
-### Other WSLs
+### Other WSL distributions
 
 ![AlpineWSL-Edge](https://github-readme-stats-fast.vercel.app/api/pin/?username=arfshl&repo=alpinewsl-edge&theme=transparent)
 ![VoidWSL](https://github-readme-stats-fast.vercel.app/api/pin/?username=arfshl&repo=voidwsl&theme=transparent)
