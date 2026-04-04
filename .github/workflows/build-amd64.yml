@@ -1,9 +1,5 @@
 name: "Build amd64"
 
-env:
-      RELEASE: trixie
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
 on:
   workflow_dispatch:
   schedule:
@@ -12,8 +8,8 @@ on:
   push:
     branches: [ 'main' ]
     paths:
-      - ".github/workflows/build-amd64.yml"
-
+      - "build*.sh"
+      - ".github/workflows/*.yml"
 
 permissions:
   contents: write  
@@ -28,39 +24,17 @@ jobs:
           fetch-depth: 0
       - name: Install Needed Dependencies
         run: |
-          sudo apt update && sudo apt install -yq curl libarchive-tools
-          curl -L -o /tmp/mmdebstrap.deb http://ftp.us.debian.org/debian/pool/main/m/mmdebstrap/mmdebstrap_1.5.7-3_all.deb
-          sudo apt install -q /tmp/mmdebstrap.deb
-          curl -L -o /tmp/keyring.deb http://ftp.us.debian.org/debian/pool/main/d/debian-archive-keyring/debian-archive-keyring_2025.1_all.deb
-          sudo apt install -q /tmp/keyring.deb
-      - name: Build stock rootfs
-        run: |
-          dist_version="$RELEASE"
-          sudo mmdebstrap \
-          --arch=amd64 \
-          --variant=minbase \
-          --components="main,contrib,non-free" \
-          --include=ca-certificates,locales \
-          --format=tar \
-          --customize-hook="chroot \$1 sed -i 's/^# \(en_US.UTF-8\)/\1/' /etc/locale.gen" \
-          --customize-hook="chroot \$1 /bin/bash -c 'DEBIAN_FRONTEND=noninteractive dpkg-reconfigure locales'" \
-          ${dist_version} \
-          rootfs.tar.gz
-
-      - name: Combine wsldl and rootfs
-        run: |
-          curl -L https://github.com/yuk7/wsldl/releases/download/26032000/icons.zip -o icons.zip
-          bsdtar -xf icons.zip
-          mv Debian.exe debian.exe
-          bsdtar -a -cf debian.zip rootfs.tar.gz debian.exe
-
+          bash build-stable.sh
       - name: Push to release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: release-amd64-${{ env.RELEASE }}
-          name: Release amd64 ${{ env.RELEASE }}
+          tag_name: release-${{ env.ARCH }}-${{ env.RELEASE }}
+          name: Release ${{ env.ARCH }} ${{ env.RELEASE }}
           files: |
             debian.zip
             rootfs.tar.gz
           preserve_order: true
-          make_latest: latest
+          make_latest: true
+
+env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
