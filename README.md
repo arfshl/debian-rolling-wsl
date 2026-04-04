@@ -81,8 +81,8 @@ Usage :
 
 ### Other WSL distributions
 
-![AlpineWSL-Edge](https://github-readme-stats-fast.vercel.app/api/pin/?username=arfshl&repo=alpinewsl-edge&theme=transparent)
-![VoidWSL](https://github-readme-stats-fast.vercel.app/api/pin/?username=arfshl&repo=voidwsl&theme=transparent)
-![ubuntu-latest-WSL](https://github-readme-stats-fast.vercel.app/api/pin/?username=arfshl&repo=ubuntu-latest-wsl&theme=transparent)
-![devuanwsl](https://github-readme-stats-fast.vercel.app/api/pin/?username=arfshl&repo=devuanwsl&theme=transparent)
-![trisquelwsl](https://github-readme-stats-fast.vercel.app/api/pin/?username=arfshl&repo=trisquelwsl&theme=transparent)
+[![alpinewsl-edge](https://github-readme-stats-fast.vercel.app/api/pin/?username=arfshl&repo=alpinewsl-edgewsl&theme=transparent)](https://github.com/arfshl/alpinewsl-edge)
+[![VoidWSL](https://github-readme-stats-fast.vercel.app/api/pin/?username=arfshl&repo=voidwsl&theme=transparent)](https://github.com/arfshl/voidwsl)
+[![ubuntu-latest-WSL](https://github-readme-stats-fast.vercel.app/api/pin/?username=arfshl&repo=ubuntu-latest-wsl&theme=transparent)](https://github.com/arfshl/ubuntu-latest-wsl)
+[![devuanwsl](https://github-readme-stats-fast.vercel.app/api/pin/?username=arfshl&repo=devuanwsl&theme=transparent)](https://github.com/arfshl/devuanwsl)
+[![trisquelwsl](https://github-readme-stats-fast.vercel.app/api/pin/?username=arfshl&repo=trisquelwsl&theme=transparent)](https://github.com/arfshl/trisquelwsl)
