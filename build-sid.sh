@@ -24,7 +24,7 @@ sudo apt install -yq /tmp/keyring.deb
 # start build with mmdebstrap
 dist_version="$RELEASE"
 sudo mmdebstrap \
-    --arch=amd64 \
+    --arch=$ARCH \
     --variant=minbase \
     --components="main,contrib,non-free" \
     --include=ca-certificates,locales \
