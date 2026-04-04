@@ -35,7 +35,6 @@ sudo mmdebstrap \
     rootfs.tar.gz
 
 # combine wsldl and rootfs (with matching arch as machine)
-cd ../
 if [ $ARCH = amd64 ]; then 
     curl -L https://github.com/yuk7/wsldl/releases/download/26032000/icons.zip -o icons.zip
     bsdtar -xf icons.zip
