@@ -41,7 +41,7 @@ if [ $ARCH = amd64 ]; then
     mv Debian.exe debian.exe
     bsdtar -a -cf debian.zip rootfs.tar.gz debian.exe
 else
-    curl -L https://github.com/yuk7/wsldl/releases/download/26032000/icons.zip -o icons.zip
+    curl -L https://github.com/yuk7/wsldl/releases/download/26032000/icons_arm64.zip -o icons.zip
     bsdtar -xf icons.zip
     mv Debian.exe debian.exe
     bsdtar -a -cf debian.zip rootfs.tar.gz debian.exe
