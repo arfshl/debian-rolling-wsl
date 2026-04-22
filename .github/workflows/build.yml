@@ -62,8 +62,8 @@ jobs:
       - name: Release stable
         uses: softprops/action-gh-release@v3
         with:
-          tag_name: ${{ needs.build-x86_64.outputs.RELEASE }}
-          name: ${{ needs.build-x86_64.outputs.RELEASE }}
+          tag_name: rolling
+          name: Debian Rolling WSL
           files: |
             aarch64/debian-*.wsl
             x86_64/debian-*.wsl
