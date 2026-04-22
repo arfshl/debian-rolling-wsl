@@ -1,3 +1,5 @@
+#!/bin/sh
+
 # export the env
 export RELEASE=testing
 ARCH=$(uname -m)
@@ -11,41 +13,47 @@ case "$ARCH" in
         exit 1
         ;;
 esac
-echo "RELEASE=$RELEASE" >> "$GITHUB_ENV"
-echo "ARCH=$ARCH" >> "$GITHUB_ENV"
+echo "RELEASE=$RELEASE" >> "$GITHUB_OUTPUT"
+echo "ARCH=$ARCH" >> "$GITHUB_OUTPUT"
 
 # install depedencies
-sudo apt update && sudo apt install -yq curl libarchive-tools
 curl -L -o /tmp/mmdebstrap.deb http://ftp.us.debian.org/debian/pool/main/m/mmdebstrap/mmdebstrap_1.5.7-3_all.deb
 sudo apt install -yq /tmp/mmdebstrap.deb
 curl -L -o /tmp/keyring.deb http://ftp.us.debian.org/debian/pool/main/d/debian-archive-keyring/debian-archive-keyring_2025.1_all.deb
 sudo apt install -yq /tmp/keyring.deb
 
-# start build with mmdebstrap
+# start build with mmdebstrap and sprays some WD-40 to get rid of rust on coreutils
 dist_version="$RELEASE"
-sudo mmdebstrap \
-    --arch=$ARCH \
-    --variant=minbase \
-    --components="main,contrib,non-free" \
-    --include=ca-certificates,locales \
-    --format=tar \
-    --customize-hook="chroot \$1 sed -i 's/^# \(en_US.UTF-8\)/\1/' /etc/locale.gen" \
-    --customize-hook="chroot \$1 /bin/bash -c 'DEBIAN_FRONTEND=noninteractive dpkg-reconfigure locales'" \
-    ${dist_version} \
-    rootfs.tar.gz
 
-# combine wsldl and rootfs (with matching arch as machine)
-if [ $ARCH = amd64 ]; then 
-    curl -L https://github.com/yuk7/wsldl/releases/download/26032000/icons.zip -o icons.zip
-    bsdtar -xf icons.zip
-    mv Debian.exe debian.exe
-    bsdtar -a -cf debian.zip rootfs.tar.gz debian.exe
-elif [ $ARCH = arm64 ]; then 
-    curl -L https://github.com/yuk7/wsldl/releases/download/26032000/icons_arm64.zip -o icons.zip
-    bsdtar -xf icons.zip
-    mv Debian.exe debian.exe
-    bsdtar -a -cf debian.zip rootfs.tar.gz debian.exe
-else
-    echo "Unsupported architecture: $ARCH"
-    exit 1  
-fi
+sudo mmdebstrap \
+--arch=$ARCH \
+--variant=apt \
+--components="main,contrib,non-free" \
+--include=locales,passwd,ca-certificates,sudo,libpam-systemd,dbus,systemd,mesa-utils,systemd-sysv \
+--format=directory \
+${dist_version} \
+debian-testing \
+
+cat <<-EOF | sudo unshare -mpf bash -e -
+sudo mount --bind /dev ./debian-testing/dev
+sudo mount --bind /proc ./debian-testing/proc
+sudo mount --bind /sys ./debian-testing/sys
+sudo echo 'nameserver 1.1.1.1' >> ./debian-testing/etc/resolv.conf
+sudo chroot ./debian-testing sed -i 's/^# \(en_US.UTF-8\)/\1/' /etc/locale.gen
+sudo chroot ./debian-testing /bin/bash -c 'DEBIAN_FRONTEND=noninteractive dpkg-reconfigure locales'
+sudo rm -rf ./debian-testing/var/lib/apt/lists/*
+sudo rm -rf ./debian-testing/var/tmp*
+sudo rm -rf ./debian-testing/tmp*
+EOF
+
+sudo cp ./wslconf/oobe.sh ./debian-testing/etc/oobe.sh
+sudo chmod 644 ./debian-testing/etc/oobe.sh
+sudo chmod +x ./debian-testing/etc/oobe.sh
+sudo cp ./wslconf/wsl-distribution-testing.conf ./debian-testing/etc/wsl-distribution.conf
+sudo chmod 644 ./debian-testing/etc/wsl-distribution.conf
+sudo mkdir -p ./debian-testing/usr/lib/wsl/
+sudo cp ./wslconf/icon.ico ./debian-testing/usr/lib/wsl/icon.ico
+
+cd ./debian-testing
+sudo tar --numeric-owner --absolute-names -c  * | gzip --best > ../install.tar.gz
+mv ../install.tar.gz ../debian-testing-$ARCH.wsl
