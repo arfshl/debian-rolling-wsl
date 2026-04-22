@@ -49,6 +49,8 @@ EOF
 sudo cp ./wslconf/oobe.sh ./debian-sid/etc/oobe.sh
 sudo chmod 644 ./debian-sid/etc/oobe.sh
 sudo chmod +x ./debian-sid/etc/oobe.sh
+sudo cp ./wslconf/wsl.conf ./debian-sid/etc/wsl.conf
+sudo chmod 644 ./debian-sid/etc/wsl.conf
 sudo cp ./wslconf/wsl-distribution-sid.conf ./debian-sid/etc/wsl-distribution.conf
 sudo chmod 644 ./debian-sid/etc/wsl-distribution.conf
 sudo mkdir -p ./debian-sid/usr/lib/wsl/

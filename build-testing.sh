@@ -49,6 +49,8 @@ EOF
 sudo cp ./wslconf/oobe.sh ./debian-testing/etc/oobe.sh
 sudo chmod 644 ./debian-testing/etc/oobe.sh
 sudo chmod +x ./debian-testing/etc/oobe.sh
+sudo cp ./wslconf/wsl.conf ./debian-testing/etc/wsl.conf
+sudo chmod 644 ./debian-testing/etc/wsl.conf
 sudo cp ./wslconf/wsl-distribution-testing.conf ./debian-testing/etc/wsl-distribution.conf
 sudo chmod 644 ./debian-testing/etc/wsl-distribution.conf
 sudo mkdir -p ./debian-testing/usr/lib/wsl/
