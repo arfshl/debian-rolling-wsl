@@ -1,24 +1,24 @@
 # Debian Rolling
 Debian testing and sid branch on WSL
 
-[![Build](https://github.com/arfshl/debian-testing-wsl/actions/workflows/build.yml/badge.svg)](https://github.com/arfshl/debian-testing-wsl/actions/workflows/build.yml)
+[![Build](https://github.com/arfshl/debian-rolling-wsl/actions/workflows/build.yml/badge.svg)](https://github.com/arfshl/debian-rolling-wsl/actions/workflows/build.yml)
 
-![screenshot](https://github.com/arfshl/debian-testing-wsl/raw/main/screenshot.png)
+![screenshot](https://github.com/arfshl/debian-rolling-wsl/raw/main/screenshot.png)
 
-### [Download](https://github.com/arfshl/debian-testing-wsl/releases)
+### [Download](https://github.com/arfshl/debian-rolling-wsl/releases)
 
 ## Requirements
 * x86_64 or aarch64 based processors
 * Windows Subsystem for Linux feature is enabled.
 
 ## Install
-#### 1. [Download here](https://github.com/arfshl/debian-testing-wsl/releases)
+#### 1. [Download here](https://github.com/arfshl/debian-rolling-wsl/releases)
 
 #### 2. Double-click the .wsl file to install it with default name
 
 #### 3. Or install from elevated cmd to customize the name
 
-     wsl --install --from-file <path>/debian-testing-amd64.wsl  --name <machine-name>
+     wsl --install --from-file <path>/debian-rolling-amd64.wsl  --name <machine-name>
 
 ### Other WSL distributions
 
