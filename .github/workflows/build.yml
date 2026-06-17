@@ -59,16 +59,26 @@ jobs:
       - name: Download artifact
         uses: actions/download-artifact@v8
 
-      - name: Release stable
+      - name: Release sid
         uses: softprops/action-gh-release@v3
         with:
-          tag_name: rolling
-          name: Debian Rolling WSL
+          tag_name: ${{ needs.build-x86_64.outputs.RELEASE }}-sid
+          name: Debian Sid Build ${{ needs.build-x86_64.outputs.RELEASE }}
           files: |
-            aarch64/debian-*.wsl
-            x86_64/debian-*.wsl
+            aarch64/debian-sid*.wsl
+            x86_64/debian-sid*.wsl
           preserve_order: true
           make_latest: true
+
+      - name: Release testing
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: ${{ needs.build-x86_64.outputs.RELEASE }}-testing
+          name: Debian Testing Build ${{ needs.build-x86_64.outputs.RELEASE }}
+          files: |
+            aarch64/debian-testing*.wsl
+            x86_64/debian-testing*.wsl
+          preserve_order: true
 
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
