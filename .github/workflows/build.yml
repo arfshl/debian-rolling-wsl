@@ -19,7 +19,7 @@ jobs:
   build-x86_64:
     runs-on: ubuntu-latest
     outputs:
-      RELEASE: ${{ steps.start_build.outputs.DATE }}
+      DATE: ${{ steps.start_build.outputs.DATE }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v6
