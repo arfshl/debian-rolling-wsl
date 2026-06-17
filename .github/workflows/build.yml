@@ -59,6 +59,16 @@ jobs:
       - name: Download artifact
         uses: actions/download-artifact@v8
 
+      - name: Release testing
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: ${{ needs.build-x86_64.outputs.DATE }}-testing
+          name: Debian Testing Build ${{ needs.build-x86_64.outputs.DATE }}
+          files: |
+            aarch64/debian-testing*.wsl
+            x86_64/debian-testing*.wsl
+          preserve_order: true
+
       - name: Release sid
         uses: softprops/action-gh-release@v3
         with:
@@ -69,16 +79,6 @@ jobs:
             x86_64/debian-sid*.wsl
           preserve_order: true
           make_latest: true
-
-      - name: Release testing
-        uses: softprops/action-gh-release@v3
-        with:
-          tag_name: ${{ needs.build-x86_64.outputs.DATE }}-testing
-          name: Debian Testing Build ${{ needs.build-x86_64.outputs.DATE }}
-          files: |
-            aarch64/debian-testing*.wsl
-            x86_64/debian-testing*.wsl
-          preserve_order: true
 
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
