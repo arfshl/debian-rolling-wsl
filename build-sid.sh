@@ -1,8 +1,8 @@
 #!/bin/sh
 
 # export the env
-export RELEASE=$(date +"%Y%m%d")
-echo "RELEASE=$RELEASE" >> "$GITHUB_OUTPUT"
+export DATE=$(date +"%Y%m%d")
+echo "DATE=$DATE" >> "$GITHUB_OUTPUT"
 export RELEASE=sid
 ARCH=$(uname -m)
 case "$ARCH" in

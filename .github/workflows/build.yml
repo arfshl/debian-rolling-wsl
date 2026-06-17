@@ -19,7 +19,7 @@ jobs:
   build-x86_64:
     runs-on: ubuntu-latest
     outputs:
-      RELEASE: ${{ steps.start_build.outputs.RELEASE }}
+      RELEASE: ${{ steps.start_build.outputs.DATE }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v6
@@ -62,8 +62,8 @@ jobs:
       - name: Release sid
         uses: softprops/action-gh-release@v3
         with:
-          tag_name: ${{ needs.build-x86_64.outputs.RELEASE }}-sid
-          name: Debian Sid Build ${{ needs.build-x86_64.outputs.RELEASE }}
+          tag_name: ${{ needs.build-x86_64.outputs.DATE }}-sid
+          name: Debian Sid Build ${{ needs.build-x86_64.outputs.DATE }}
           files: |
             aarch64/debian-sid*.wsl
             x86_64/debian-sid*.wsl
@@ -73,8 +73,8 @@ jobs:
       - name: Release testing
         uses: softprops/action-gh-release@v3
         with:
-          tag_name: ${{ needs.build-x86_64.outputs.RELEASE }}-testing
-          name: Debian Testing Build ${{ needs.build-x86_64.outputs.RELEASE }}
+          tag_name: ${{ needs.build-x86_64.outputs.DATE }}-testing
+          name: Debian Testing Build ${{ needs.build-x86_64.outputs.DATE }}
           files: |
             aarch64/debian-testing*.wsl
             x86_64/debian-testing*.wsl
