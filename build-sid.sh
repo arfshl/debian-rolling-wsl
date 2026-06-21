@@ -19,8 +19,7 @@ echo "RELEASE=$RELEASE" >> "$GITHUB_OUTPUT"
 echo "ARCH=$ARCH" >> "$GITHUB_OUTPUT"
 
 # install depedencies
-curl -L -o /tmp/mmdebstrap.deb http://ftp.us.debian.org/debian/pool/main/m/mmdebstrap/mmdebstrap_1.5.7-3_all.deb
-sudo apt install -yq /tmp/mmdebstrap.deb
+sudo apt install -yq mmdebstrap
 curl -L -o /tmp/keyring.deb http://ftp.us.debian.org/debian/pool/main/d/debian-archive-keyring/debian-archive-keyring_2025.1_all.deb
 sudo apt install -yq /tmp/keyring.deb
 
